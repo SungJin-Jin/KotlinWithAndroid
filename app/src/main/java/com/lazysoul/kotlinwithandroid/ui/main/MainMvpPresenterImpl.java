@@ -5,8 +5,6 @@ import com.lazysoul.kotlinwithandroid.common.RxPresenter;
 import com.lazysoul.kotlinwithandroid.datas.Todo;
 import com.lazysoul.kotlinwithandroid.singletons.TodoManager;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +32,7 @@ class MainMvpPresenterImpl<MvpView extends BaseMvpView> extends RxPresenter impl
                 public void accept(String text) throws Exception {
                     ArrayList<Todo> searchedList = TodoManager.search(text);
                     if (searchedList.isEmpty()) {
-                        view.showEmtpyView();
+                        view.showEmptyView();
                     } else {
                         view.onUpdateTodoList(searchedList);
                     }
@@ -54,14 +52,14 @@ class MainMvpPresenterImpl<MvpView extends BaseMvpView> extends RxPresenter impl
 
     @Override
     public void createTodoSamples() {
-        view.onCreatedSampes(TodoManager.createSamples());
+        view.onCreatedSamples(TodoManager.createSamples());
     }
 
     @Override
     public void loadTodoList() {
         List<Todo> todoList = TodoManager.getTodoList();
         if (null != todoList && todoList.isEmpty()) {
-            view.showEmtpyView();
+            view.showEmptyView();
         } else {
             view.onUpdateTodoList(todoList);
         }

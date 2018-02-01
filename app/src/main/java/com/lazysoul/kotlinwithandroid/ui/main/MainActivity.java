@@ -1,11 +1,5 @@
 package com.lazysoul.kotlinwithandroid.ui.main;
 
-import com.lazysoul.kotlinwithandroid.R;
-import com.lazysoul.kotlinwithandroid.common.BaseActivity;
-import com.lazysoul.kotlinwithandroid.datas.Todo;
-import com.lazysoul.kotlinwithandroid.singletons.TodoManager;
-import com.lazysoul.kotlinwithandroid.ui.detail.DetailActivity;
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +14,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.lazysoul.kotlinwithandroid.R;
+import com.lazysoul.kotlinwithandroid.common.BaseActivity;
+import com.lazysoul.kotlinwithandroid.datas.Todo;
+import com.lazysoul.kotlinwithandroid.singletons.TodoManager;
+import com.lazysoul.kotlinwithandroid.ui.detail.DetailActivity;
 
 import java.util.List;
 
@@ -136,13 +136,13 @@ public class MainActivity extends BaseActivity implements MainMvpView, TodoListe
     }
 
     @Override
-    public void showEmtpyView() {
+    public void showEmptyView() {
         todoAdapter.clear();
         emptyView.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onCreatedSampes(List<Todo> todoList) {
+    public void onCreatedSamples(List<Todo> todoList) {
         todoAdapter.addItems(todoList);
     }
 

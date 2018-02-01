@@ -1,14 +1,14 @@
 package com.lazysoul.kotlinwithandroid.common;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+
 import com.lazysoul.kotlinwithandroid.KotlinWithAndroid;
 import com.lazysoul.kotlinwithandroid.injection.components.ActivityComponent;
 import com.lazysoul.kotlinwithandroid.injection.components.ApplicationComponent;
 import com.lazysoul.kotlinwithandroid.injection.components.DaggerActivityComponent;
 import com.lazysoul.kotlinwithandroid.injection.module.ActivityModule;
-
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by Lazysoul on 2017. 7. 15..
@@ -24,7 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseMvpV
 
         component = DaggerActivityComponent
                 .builder()
-                .applicationComponent(getApplicationComponet())
+                .applicationComponent(getApplicationComponent())
                 .activityModule(new ActivityModule(this))
                 .build();
 
@@ -32,7 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseMvpV
         initPresenter();
     }
 
-    public ApplicationComponent getApplicationComponet() {
+    public ApplicationComponent getApplicationComponent() {
         return ((KotlinWithAndroid) getApplication()).getComponent();
     }
 }
