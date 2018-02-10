@@ -1,9 +1,7 @@
 package com.lazysoul.kotlinwithandroid.injection.module
 
-import com.lazysoul.kotlinwithandroid.injection.scopes.ActivityScope
-
 import android.app.Activity
-
+import com.lazysoul.kotlinwithandroid.injection.scopes.ActivityScope
 import dagger.Module
 import dagger.Provides
 
