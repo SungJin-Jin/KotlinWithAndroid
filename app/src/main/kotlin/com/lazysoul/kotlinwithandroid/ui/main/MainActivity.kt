@@ -6,29 +6,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-
 import com.lazysoul.kotlinwithandroid.R
 import com.lazysoul.kotlinwithandroid.common.BaseActivity
 import com.lazysoul.kotlinwithandroid.datas.Todo
 import com.lazysoul.kotlinwithandroid.singletons.TodoManager
 import com.lazysoul.kotlinwithandroid.ui.detail.DetailActivity
-
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), MainMvpView, TodoListener {
+class MainActivity : BaseActivity(), MainMvpView {
 
-    private var todoAdapter: TodoAdapter? = null
-
-    private var emptyView: View? = null
+    private lateinit var todoAdapter: TodoAdapter
 
     private val REQUEST_CODE_DETAIL = 100
 
@@ -41,21 +35,20 @@ class MainActivity : BaseActivity(), MainMvpView, TodoListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setSupportActionBar(findViewById<View>(R.id.tb_activity_main) as Toolbar)
+        setSupportActionBar(tb_activity_main)
 
-        emptyView = findViewById(R.id.tv_activity_main_empty)
-        val addBt = findViewById<FloatingActionButton>(R.id.fa_activity_main)
+        rv_activity_main.layoutManager = LinearLayoutManager(this)
+        todoAdapter = TodoAdapter(
+                { id, checked -> presenter.checked(id, checked) },
+                { goTodo(it) }
+        )
+        rv_activity_main.adapter = todoAdapter
 
-        val recyclerView = findViewById<RecyclerView>(R.id.rv_activity_main)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        todoAdapter = TodoAdapter(this)
-        recyclerView.adapter = todoAdapter
+        fa_activity_main.setOnClickListener { createTodo() }
 
-        addBt.setOnClickListener { createTodo() }
-
-        if (sharedPreferences!!.getBoolean(KEY_IS_FIRST, true)) {
+        if (sharedPreferences.getBoolean(KEY_IS_FIRST, true)) {
             presenter.createTodoSamples()
-            editor!!.putBoolean(KEY_IS_FIRST, false).apply()
+            editor.putBoolean(KEY_IS_FIRST, false).apply()
         } else {
             presenter.loadTodoList()
         }
@@ -99,33 +92,25 @@ class MainActivity : BaseActivity(), MainMvpView, TodoListener {
         for ((id, body, isChecked) in todoList) {
             Log.d("foo", "id : $id, body : $body, checked : $isChecked")
         }
-        todoAdapter!!.addItems(todoList)
-        emptyView!!.visibility = View.GONE
+        todoAdapter.addItems(todoList)
+        tv_activity_main_empty.visibility = View.GONE
     }
 
     override fun onUpdateTodo(todo: Todo) {
-        todoAdapter!!.update(todo)
+        todoAdapter.update(todo)
     }
 
     override fun onCreatedTodo(todo: Todo) {
-        todoAdapter!!.addItem(todo)
+        todoAdapter.addItem(todo)
     }
 
     override fun showEmptyView() {
-        todoAdapter!!.clear()
-        emptyView!!.visibility = View.VISIBLE
+        todoAdapter.clear()
+        tv_activity_main_empty.visibility = View.VISIBLE
     }
 
     override fun onCreatedSamples(todoList: List<Todo>) {
-        todoAdapter!!.addItems(todoList)
-    }
-
-    override fun onClicked(id: Int) {
-        goTodo(id)
-    }
-
-    override fun onChecked(id: Int, isChecked: Boolean) {
-        presenter.checked(id, isChecked)
+        todoAdapter.addItems(todoList)
     }
 
     private fun createTodo() {

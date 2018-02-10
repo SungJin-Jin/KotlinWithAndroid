@@ -110,16 +110,17 @@ class DetailActivity : BaseActivity(), DetailMvpView {
     }
 
     override fun onSaved(requestType: Int, todo: Todo) {
-        var result = -1
-        when (requestType) {
-            TodoManager.REQUEST_TYPE_CREATE -> result = TodoManager.RESULT_TYPE_CREATED
-            TodoManager.REQUEST_TYPE_VIEW -> result = TodoManager.RESULT_TYPE_UPDATED
+        val result = when (requestType) {
+            TodoManager.REQUEST_TYPE_CREATE -> TodoManager.RESULT_TYPE_CREATED
+            TodoManager.REQUEST_TYPE_VIEW -> TodoManager.RESULT_TYPE_UPDATED
+            else -> -1
         }
 
-        val resultData = Intent()
-        resultData.putExtra(TodoManager.KEY_RESULT_TYPE, result)
-        resultData.putExtra(TodoManager.KEY_ID, todo.id)
-        resultData.putExtra(TodoManager.KEY_BODY, todo.body)
-        setResult(Activity.RESULT_OK, resultData)
+        with(Intent()) {
+            putExtra(TodoManager.KEY_RESULT_TYPE, result)
+            putExtra(TodoManager.KEY_ID, todo.id)
+            putExtra(TodoManager.KEY_BODY, todo.body)
+            setResult(Activity.RESULT_OK, this)
+        }
     }
 }

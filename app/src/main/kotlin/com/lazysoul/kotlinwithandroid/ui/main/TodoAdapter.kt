@@ -12,7 +12,8 @@ import java.util.*
  * Created by Lazysoul on 2017. 7. 12..
  */
 
-internal class TodoAdapter(private val todoListener: TodoListener) : RecyclerView.Adapter<TodoAdapter.TodoHolder>() {
+internal class TodoAdapter(val checkAction : (Int, Boolean) -> Unit,
+                           val clickAction: (Int) -> Unit) : RecyclerView.Adapter<TodoAdapter.TodoHolder>() {
 
     private val todoList = ArrayList<Todo>()
 
@@ -61,9 +62,9 @@ internal class TodoAdapter(private val todoListener: TodoListener) : RecyclerVie
             itemView.cb_item.isChecked = todo.isChecked
             itemView.cb_item.setOnClickListener {
                 todo.isChecked = !todo.isChecked
-                todoListener.onChecked(todo.id, todo.isChecked)
+                checkAction.invoke(todo.id, todo.isChecked)
             }
-            itemView.cv_item_todo.setOnClickListener { todoListener.onClicked(todo.id) }
+            itemView.cv_item_todo.setOnClickListener { clickAction.invoke(todo.id) }
             itemView.tv_item_todo_body.text = todo.body
         }
     }

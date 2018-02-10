@@ -18,7 +18,7 @@ class DetailMvpPresenter<MvpView : BaseMvpView> : RxPresenter(), BaseMvpPresente
 
     private var view: DetailMvpView? = null
 
-    private var beforeTodo: Todo? = null
+    private lateinit var beforeTodo: Todo
 
     private val textChangeSubject = PublishSubject.create<Boolean>()
 
@@ -29,8 +29,8 @@ class DetailMvpPresenter<MvpView : BaseMvpView> : RxPresenter(), BaseMvpPresente
                 .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { isChanged ->
-                    beforeTodo!!.isFixed = isChanged
-                    view!!.onChangedSaveBt()
+                    beforeTodo?.isFixed = isChanged
+                    view?.onChangedSaveBt()
                 })
     }
 
@@ -48,45 +48,41 @@ class DetailMvpPresenter<MvpView : BaseMvpView> : RxPresenter(), BaseMvpPresente
         when (requestType) {
             TodoManager.REQUEST_TYPE_CREATE -> {
                 beforeTodo = Todo()
-                beforeTodo!!.id = -1
-                beforeTodo!!.body = ""
-                view!!.onUpdated(beforeTodo!!, true)
+                beforeTodo.id = -1
+                beforeTodo.body = ""
+                view?.onUpdated(beforeTodo, true)
             }
             TodoManager.REQUEST_TYPE_VIEW -> {
                 val id = intent.getIntExtra(TodoManager.KEY_ID, -1)
                 if (id != -1) {
                     beforeTodo = Todo()
-                    beforeTodo!!.id = id
-                    view!!.onUpdated(beforeTodo!!, false)
+                    beforeTodo.id = id
+                    view?.onUpdated(beforeTodo, false)
                 }
             }
         }
     }
 
     fun onTextChanged(s: String) {
-        if (!beforeTodo!!.isFixed && isChanged(s)) {
-            beforeTodo!!.isFixed = true
+        if (!beforeTodo.isFixed && isChanged(s)) {
+            beforeTodo.isFixed = true
         }
 
         textChangeSubject.onNext(isChanged(s))
     }
 
     fun saveTodo(text: String) {
-        beforeTodo!!.body = text
-        beforeTodo!!.isFixed = false
-        if (beforeTodo!!.id == -1) {
-            beforeTodo!!.id = TodoManager.maxId + 1
+        beforeTodo.body = text
+        beforeTodo.isFixed = false
+        if (beforeTodo.id == -1) {
+            beforeTodo.id = TodoManager.maxId + 1
         }
-        view!!.onSaved(requestType, beforeTodo!!)
+        view?.onSaved(requestType, beforeTodo)
 
         textChangeSubject.onNext(false)
     }
 
-    private fun isChanged(s: String): Boolean {
-        return beforeTodo!!.body != s
-    }
+    private fun isChanged(s: String) = beforeTodo.body != s
 
-    fun isFixed(): Boolean {
-        return beforeTodo!!.isFixed
-    }
+    fun isFixed() = beforeTodo.isFixed
 }

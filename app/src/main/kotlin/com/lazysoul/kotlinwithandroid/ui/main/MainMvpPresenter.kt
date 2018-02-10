@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 class MainMvpPresenter<MvpView : BaseMvpView> : RxPresenter(), BaseMvpPresenter<MvpView> {
 
-    private var view: MainMvpView? = null
+    private lateinit var view: MainMvpView
 
     private val searchTextChangeSubject = PublishSubject.create<String>()
 
@@ -25,9 +25,9 @@ class MainMvpPresenter<MvpView : BaseMvpView> : RxPresenter(), BaseMvpPresenter<
                 .subscribe { text ->
                     val searchedList = TodoManager.search(text)
                     if (searchedList.isEmpty()) {
-                        view!!.showEmptyView()
+                        view.showEmptyView()
                     } else {
-                        view!!.onUpdateTodoList(searchedList)
+                        view.onUpdateTodoList(searchedList)
                     }
                 })
     }
@@ -40,39 +40,38 @@ class MainMvpPresenter<MvpView : BaseMvpView> : RxPresenter(), BaseMvpPresenter<
         dispose()
     }
 
-     fun createTodoSamples() {
-        view!!.onCreatedSamples(TodoManager.createSamples())
+    fun createTodoSamples() {
+        view.onCreatedSamples(TodoManager.createSamples())
     }
 
-     fun loadTodoList() {
+    fun loadTodoList() {
         val todoList = TodoManager.getTodoList()
-        if (null != todoList && todoList.isEmpty()) {
-            view!!.showEmptyView()
+        if (todoList.isEmpty()) {
+            view.showEmptyView()
         } else {
-            view!!.onUpdateTodoList(todoList)
+            view.onUpdateTodoList(todoList)
         }
     }
 
-     fun insert(id: Int, body: String) {
-        view!!.onCreatedTodo(TodoManager.insert(id, body))
+    fun insert(id: Int, body: String) {
+        view.onCreatedTodo(TodoManager.insert(id, body))
     }
 
-     fun update(id: Int, body: String) {
-        val todo = TodoManager.update(id, body)
-        if (todo != null) {
-            view!!.onUpdateTodo(todo)
+    fun update(id: Int, body: String) {
+        TodoManager.update(id, body).let {
+            view.onUpdateTodo(it!!)
         }
     }
 
-     fun checked(id: Int, isChecked: Boolean) {
+    fun checked(id: Int, isChecked: Boolean) {
         TodoManager.checked(id, isChecked)
     }
 
-     fun searchQuery(text: String) {
+    fun searchQuery(text: String) {
         searchTextChangeSubject.onNext(text)
     }
 
-     fun searchFinish() {
+    fun searchFinish() {
         loadTodoList()
     }
 }

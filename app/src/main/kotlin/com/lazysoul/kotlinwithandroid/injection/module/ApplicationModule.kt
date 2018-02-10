@@ -3,11 +3,9 @@ package com.lazysoul.kotlinwithandroid.injection.module
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-
-import javax.inject.Singleton
-
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 /**
  * Created by Lazysoul on 2017. 7. 17..
@@ -25,6 +23,11 @@ class ApplicationModule(private val application: Application) {
     @Provides
     internal fun provideSharedPrefs(): SharedPreferences {
         return application.getSharedPreferences("kotlinWithAndroid", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    internal fun provideSharedPrefs2(): SharedPreferences {
+        return application.getSharedPreferences("kotlinWithAndroid2", Context.MODE_PRIVATE)
     }
 
     @Provides

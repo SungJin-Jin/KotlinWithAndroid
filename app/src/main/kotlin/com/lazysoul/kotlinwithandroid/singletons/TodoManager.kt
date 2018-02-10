@@ -1,7 +1,6 @@
 package com.lazysoul.kotlinwithandroid.singletons
 
 import com.lazysoul.kotlinwithandroid.datas.Todo
-import java.util.*
 
 /**
  * Created by Lazysoul on 2017. 7. 12..
@@ -25,53 +24,28 @@ object TodoManager {
 
     const val RESULT_TYPE_UPDATED = 201
 
-    private val todoList = ArrayList<Todo>()
+    private var todoList = mutableListOf<Todo>()
 
     val maxId: Int
-        get() {
-            var max = -1
-            for ((id) in todoList) {
-                if (id > max) {
-                    max = id
-                }
-            }
-            return max
-        }
+        get() = todoList.maxBy { it.id }?.id ?: -1
 
     fun getTodoList(): List<Todo> {
         return todoList
     }
 
-    fun createSamples(): ArrayList<Todo> {
-        for (i in 0..9) {
-            val todo = Todo(i, "Todo " + i, false, false)
-            todoList.add(todo)
-        }
-        return todoList
-    }
-
-    fun getTodo(id: Int): Todo? {
-        for (todo in todoList) {
-            if (todo.id == id) {
-                return todo
-            }
-        }
-        return null
-    }
-
-    fun search(text: String): ArrayList<Todo> {
-        val result = ArrayList<Todo>()
-        if (text.isEmpty()) {
-            result.addAll(todoList)
-        } else {
-
-            for (todo in todoList) {
-                if (todo.body!!.contains(text)) {
-                    result.add(todo)
+    fun createSamples(): List<Todo> {
+        return (0..9).map { Todo(it, "Todo $it", false, false) }
+                .toMutableList()
+                .apply {
+                    todoList = this
                 }
-            }
-        }
-        return result
+    }
+
+    fun getTodo(id: Int) = todoList.firstOrNull({ it.id == id })
+
+    fun search(text: String) = when {
+        text.isEmpty() -> todoList
+        else -> todoList.filter { it.body.contains(text) }
     }
 
     fun insert(id: Int, body: String): Todo {
@@ -80,22 +54,11 @@ object TodoManager {
         return todo
     }
 
-    fun update(id: Int, body: String): Todo? {
-        for (todo in todoList) {
-            if (todo.id == id) {
-                todo.body = body
-                return todo
-            }
-        }
-        return null
-    }
+    fun update(id: Int, body: String) =
+            todoList.firstOrNull { it.id == id }
+                    .apply { this?.body = body }
 
     fun checked(id: Int, isChecked: Boolean) {
-        for (todo in todoList) {
-            if (todo.id == id) {
-                todo.isChecked = isChecked
-                break
-            }
-        }
+        todoList.firstOrNull { it.id == id }?.isChecked = isChecked
     }
 }
